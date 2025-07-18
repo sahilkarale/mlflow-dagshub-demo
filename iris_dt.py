@@ -9,7 +9,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
 import os
 
-mlflow.set_tracking_uri("dadda")
+import dagshub
+dagshub.init(repo_owner='sahilkarale', repo_name='mlflow-dagshub-demo', mlflow=True)
+
+
+mlflow.set_tracking_uri("https://dagshub.com/sahilkarale/mlflow-dagshub-demo.mlflow")
 # Hyperparameters
 max_depth = 12
 
