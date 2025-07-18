@@ -14,51 +14,56 @@ dagshub.init(repo_owner='sahilkarale', repo_name='mlflow-dagshub-demo', mlflow=T
 
 
 mlflow.set_tracking_uri("https://dagshub.com/sahilkarale/mlflow-dagshub-demo.mlflow")
-# Hyperparameters
-max_depth = 12
 
-# Load the Iris dataset
+# Load the iris dataset
 iris = load_iris()
 X = iris.data
 y = iris.target
 
-# Split the dataset
+# Split the dataset into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-mlflow.set_experiment("iris-dt")
+# Define the parameters for the Random Forest model
+max_depth = 1
 
-with mlflow.start_run(run_name = "DTWITH max_depth = 12 and confusion matrix"):
-    # Initialize the model using variables
-    rf = DecisionTreeClassifier(max_depth=max_depth)
+# apply mlflow
 
-    # Train the model
-    rf.fit(X_train, y_train)    
+mlflow.set_experiment('iris-dt')
 
-    # Predict and evaluate
-    y_pred = rf.predict(X_test)
-    
-    accuracy = accuracy_score(y_test,y_pred)
+with mlflow.start_run():
 
-    mlflow.log_metric("accuracy_score",accuracy)
-    mlflow.log_param("max_depth",max_depth)
-    
+    dt = DecisionTreeClassifier(max_depth=max_depth)
+
+    dt.fit(X_train, y_train)
+
+    y_pred = dt.predict(X_test)
+
+    accuracy = accuracy_score(y_test, y_pred)
+
+    mlflow.log_metric('accuracy', accuracy)
+
+    mlflow.log_param('max_depth', max_depth)
+
+    # Create a confusion matrix plot
     cm = confusion_matrix(y_test, y_pred)
-    plt.figure(figsize=(6, 4))
-    sns.heatmap(cm, annot=True, cmap="Blues", fmt="d", xticklabels=iris.target_names, yticklabels=iris.target_names)
-    plt.xlabel("Predicted")
-    plt.ylabel("Actual")
-    plt.title("Confusion Matrix")
+    plt.figure(figsize=(6,6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=iris.target_names, yticklabels=iris.target_names)
+    plt.ylabel('Actual')
+    plt.xlabel('Predicted')
+    plt.title('Confusion Matrix')
     
+    # Save the plot as an artifact
     plt.savefig("confusion_matrix.png")
-    plt.close()
 
-    # Log artifact      
-    mlflow.log_artifact("confusion_matrix.png") 
-    
-    mlflow.log_feedback(__file__)
-    mlflow.sklearn.log_model(rf, "decision_tree")
-    
-    mlflow.set_tag("sahil","author")
+    # mlflow code
+    mlflow.log_artifact("confusion_matrix.png")
 
- 
-    print("accuracy",accuracy)
+    mlflow.log_artifact(__file__)
+
+    mlflow.sklearn.log_model(dt, "decision tree")
+
+    mlflow.set_tag('author','nitish')
+    mlflow.set_tag('model','decision tree')
+
+    print('accuracy', accuracy)
+
