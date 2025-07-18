@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
 import os
 
-
+mlflow.set_tracking_uri("dadda")
 # Hyperparameters
 max_depth = 12
 
